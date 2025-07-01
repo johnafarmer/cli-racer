@@ -1,41 +1,39 @@
-# Environment
-.env
-.env.*
-*.env
-
 # Dependencies
 node_modules/
-vendor/
 
-# Build
+# Build output
 dist/
 build/
-*.out
+
+# TypeScript
+*.tsbuildinfo
 
 # IDE
 .vscode/
 .idea/
+*.swp
+*.swo
 .DS_Store
 
 # Logs
-*.log
 logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Cache
-.cache/
-.next/
-.nuxt/
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# Python
-__pycache__/
-*.pyc
-venv/
+# Testing
+coverage/
+.nyc_output/
 
-# Temp
-tmp/
-temp/
+# Misc
 *.tmp
-
-# Keys
-*.pem
-*.key
+*.temp
+.cache/
