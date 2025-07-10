@@ -54,11 +54,16 @@ export function useGameEngine(config: GameConfig & { mode: GameMode }) {
           newWords[nextIndex].current = true;
         }
 
-        // Only count correct keystrokes if the word was typed correctly
-        const correctKeystrokes = isCorrect 
-          ? prev.stats.correctKeystrokes + currentWord.text.length + 1 
-          : prev.stats.correctKeystrokes;
-        const totalKeystrokes = prev.stats.totalKeystrokes + prev.currentInput.length + 1;
+        // Count correct characters typed for this word
+        let correctCharsInWord = 0;
+        for (let i = 0; i < Math.min(prev.currentInput.length, currentWord.text.length); i++) {
+          if (prev.currentInput[i] === currentWord.text[i]) {
+            correctCharsInWord++;
+          }
+        }
+        
+        const correctKeystrokes = prev.stats.correctKeystrokes + correctCharsInWord + (isCorrect ? 1 : 0); // +1 for space if word is correct
+        const totalKeystrokes = prev.stats.totalKeystrokes + 1; // Just add 1 for the space key
         const timeElapsed = (Date.now() - prev.startTime!) / 1000;
 
         return {
@@ -83,15 +88,19 @@ export function useGameEngine(config: GameConfig & { mode: GameMode }) {
     }
     
     // Update current input for regular typing
-    setGameState(prev => ({
-      ...prev,
-      currentInput: input,
-      stats: {
-        ...prev.stats,
-        totalKeystrokes: prev.stats.totalKeystrokes + 1,
-        accuracy: calculateAccuracy(prev.stats.correctKeystrokes, prev.stats.totalKeystrokes + 1)
-      }
-    }));
+    setGameState(prev => {
+      // Track if this is a new character being typed (not just updating the string)
+      const isNewChar = input.length > prev.currentInput.length;
+      
+      return {
+        ...prev,
+        currentInput: input,
+        stats: {
+          ...prev.stats,
+          totalKeystrokes: isNewChar ? prev.stats.totalKeystrokes + 1 : prev.stats.totalKeystrokes
+        }
+      };
+    });
   }, [gameState.isPlaying, gameState.isFinished, gameState.words, gameState.currentWordIndex, config]);
 
   // Handle backspace

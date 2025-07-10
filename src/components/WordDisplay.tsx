@@ -10,8 +10,8 @@ interface WordDisplayProps {
 
 export const WordDisplay: React.FC<WordDisplayProps> = ({ words, currentInput, currentWordIndex }) => {
   // Show a window of words around the current word
-  const windowSize = 10;
-  const startIndex = Math.max(0, currentWordIndex - 2);
+  const windowSize = 15;
+  const startIndex = Math.max(0, currentWordIndex - 4);
   const endIndex = Math.min(words.length, startIndex + windowSize);
   const visibleWords = words.slice(startIndex, endIndex);
 

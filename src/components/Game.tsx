@@ -42,7 +42,7 @@ export const Game: React.FC<GameProps> = ({ mode, config, onExit }) => {
     }
 
     if (gameState.isFinished) {
-      if (key.return) {
+      if (key.tab) {
         restartGame();
         setGameKey(prev => prev + 1); // Trigger useEffect to start game again
       }
@@ -98,7 +98,7 @@ export const Game: React.FC<GameProps> = ({ mode, config, onExit }) => {
         </Box>
         
         <Box marginTop={2} flexDirection="column" alignItems="center">
-          <Text color="cyan">Press ENTER to play again</Text>
+          <Text color="cyan">Press TAB to play again</Text>
           <Text dimColor>Press ESC to return to menu</Text>
         </Box>
       </Box>
