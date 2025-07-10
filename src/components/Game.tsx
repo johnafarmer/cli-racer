@@ -51,8 +51,9 @@ export const Game: React.FC<GameProps> = ({ mode, config, onExit }) => {
 
     if (!gameState.isPlaying) return;
 
-    if (key.backspace) {
+    if (key.backspace || key.delete) {
       handleBackspace();
+      return;
     } else if (key.return && mode === 'vibe') {
       // End vibe mode on enter
       endGame();

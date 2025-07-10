@@ -62,8 +62,10 @@ export function useGameEngine(config: GameConfig & { mode: GameMode }) {
           }
         }
         
+        // Only count the actual characters submitted (including space)
+        const charsSubmitted = prev.currentInput.length + 1; // +1 for the space
         const correctKeystrokes = prev.stats.correctKeystrokes + correctCharsInWord + (isCorrect ? 1 : 0); // +1 for space if word is correct
-        const totalKeystrokes = prev.stats.totalKeystrokes + 1; // Just add 1 for the space key
+        const totalKeystrokes = prev.stats.totalKeystrokes + charsSubmitted;
         const timeElapsed = (Date.now() - prev.startTime!) / 1000;
 
         return {
@@ -88,19 +90,10 @@ export function useGameEngine(config: GameConfig & { mode: GameMode }) {
     }
     
     // Update current input for regular typing
-    setGameState(prev => {
-      // Track if this is a new character being typed (not just updating the string)
-      const isNewChar = input.length > prev.currentInput.length;
-      
-      return {
-        ...prev,
-        currentInput: input,
-        stats: {
-          ...prev.stats,
-          totalKeystrokes: isNewChar ? prev.stats.totalKeystrokes + 1 : prev.stats.totalKeystrokes
-        }
-      };
-    });
+    setGameState(prev => ({
+      ...prev,
+      currentInput: input
+    }));
   }, [gameState.isPlaying, gameState.isFinished, gameState.words, gameState.currentWordIndex, config]);
 
   // Handle backspace
