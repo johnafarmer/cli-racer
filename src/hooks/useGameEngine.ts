@@ -5,9 +5,11 @@ import { calculateWPM, calculateAccuracy, initializeStats } from '../utils/stats
 
 export function useGameEngine(config: GameConfig & { mode: GameMode }) {
   const [gameState, setGameState] = useState<GameState>(() => {
-    const wordCount = config.mode === 'words' ? config.wordCount! : 50;
+    // For vibe mode, start with more words and we'll add more dynamically
+    const wordCount = config.mode === 'words' ? config.wordCount! :
+                      config.mode === 'vibe' ? 100 : 50;
     const words = getRandomWords(config.difficulty, wordCount);
-    
+
     return {
       words: words.map((text, index) => ({
         text,
@@ -44,13 +46,26 @@ export function useGameEngine(config: GameConfig & { mode: GameMode }) {
         const newWords = [...prev.words];
         const currentWord = prev.words[prev.currentWordIndex];
         const isCorrect = prev.currentInput === currentWord.text;
-        
+
         newWords[prev.currentWordIndex].completed = true;
-        
+
         const nextIndex = prev.currentWordIndex + 1;
-        const isLastWord = nextIndex >= prev.words.length;
-        
-        if (nextIndex < prev.words.length) {
+
+        // For vibe mode, generate more words if we're getting close to the end
+        if (config.mode === 'vibe' && nextIndex >= prev.words.length - 20) {
+          const additionalWords = getRandomWords(config.difficulty, 50);
+          const newWordObjects = additionalWords.map(text => ({
+            text,
+            display: text,
+            completed: false,
+            current: false
+          }));
+          newWords.push(...newWordObjects);
+        }
+
+        const isLastWord = config.mode !== 'vibe' && nextIndex >= prev.words.length;
+
+        if (nextIndex < newWords.length) {
           newWords[nextIndex].current = true;
         }
 
@@ -61,7 +76,7 @@ export function useGameEngine(config: GameConfig & { mode: GameMode }) {
             correctCharsInWord++;
           }
         }
-        
+
         // Only count the actual characters submitted (including space)
         const charsSubmitted = prev.currentInput.length + 1; // +1 for the space
         const correctKeystrokes = prev.stats.correctKeystrokes + correctCharsInWord + (isCorrect ? 1 : 0); // +1 for space if word is correct
@@ -142,9 +157,10 @@ export function useGameEngine(config: GameConfig & { mode: GameMode }) {
 
   // Restart game
   const restartGame = useCallback(() => {
-    const wordCount = config.mode === 'words' ? config.wordCount! : 50;
+    const wordCount = config.mode === 'words' ? config.wordCount! :
+                      config.mode === 'vibe' ? 100 : 50;
     const words = getRandomWords(config.difficulty, wordCount);
-    
+
     setGameState({
       words: words.map((text, index) => ({
         text,
@@ -158,7 +174,7 @@ export function useGameEngine(config: GameConfig & { mode: GameMode }) {
       isPlaying: false,
       isFinished: false
     });
-    
+
     setTimeRemaining(config.timeLimit || 0);
   }, [config]);
 
