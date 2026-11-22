@@ -1,5 +1,7 @@
 # CLAUDE.md
 
+John's global rules come first: `fleet/global.md` in johnafarmer/agent-desktop, which every fleet machine loads as `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md`. Nothing in this file overrides them.
+
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository. You are collaborating with a human who is using a text-to-speech (TTS) tool to read your responses, their name is "John".
 
 ## CRITICAL: Communication Style Guidelines!
